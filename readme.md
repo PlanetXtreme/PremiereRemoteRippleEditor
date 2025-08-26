@@ -11,7 +11,10 @@
 [![Custom](https://img.shields.io/badge/Custom%20Functionality-Available-green)](https://github.com/sebinside/PremiereRemote/tree/custom/host/src)
 [![Release](https://img.shields.io/github/v/release/sebinside/PremiereRemote)](https://github.com/sebinside/PremiereRemote/releases)
 
-Using the [Adobe Premiere Extension mechanism](https://github.com/Adobe-CEP), **PremiereRemote** provides a framework to trigger your own Premiere CEP-based functionality from outside of Premiere, e.g., by using [AutoHotkey](https://autohotkey.com/). This is achieved with a server that is started inside of Premiere on your local machine. Any custom functionality can then be triggerd using a local http request or using websockets.
+Using the [Adobe Premiere Pro CEP extension mechanism](https://github.com/Adobe-CEP), **PremiereRemote** provides a framework to trigger your own Premiere functionality from outside of Premiere, e.g., by using [AutoHotkey](https://autohotkey.com/). This is achieved by starting a server inside of Premiere on your local machine, allowing to trigger custom functionality using a local http request or using websockets. TL;DR:
+
+![Overview](figure-light.png#gh-light-mode-only)
+![Overview](figure-dark.png#gh-dark-mode-only)
 
 Let's take a custom function like locking a video track inside of Premiere Pro. Unfortunately, there are no shortcuts available without modification. With CEP, you can define your own javascript function using extendscript:
 
