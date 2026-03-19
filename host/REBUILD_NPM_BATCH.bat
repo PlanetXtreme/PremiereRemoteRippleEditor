@@ -9,10 +9,9 @@ if %errorlevel% neq 0 (
     :: Launch a new elevated instance of this same script
     powershell -Command "Start-Process '%~f0' -Verb RunAs"
     echo Exiting current non-elevated instance.
-    :: pause
     exit /b
 )
-
+Q
 :: === Elevated instance starts here ===
 echo Running as admin.
 
@@ -20,9 +19,25 @@ echo Running as admin.
 cd /d "%~dp0"
 echo Current directory: %cd%
 
-:: Optional: run npm (will only work if npm is in PATH for admin)
+:: Run npm run build
 echo Running npm run build...
-npm run build
+:: (will only work if npm is in PATH for admin)
+call npm run build
 
-:: echo Done. Press any key to exit.
-:: pause
+:: Check if the previous command failed
+if %errorlevel% neq 0 (
+    :: Optional: Change text color to Red on Black for visibility
+    color 0C
+    echo.
+    echo  ================================================
+    echo   ERROR: An error occurred during the build.
+    echo   Check that you have nodejs intalled -----------        nodejs.org/en/download
+    echo  ================================================
+    echo.
+    pause
+    exit /b %errorlevel%
+)
+
+echo.
+echo Build finished successfully.
+pause
