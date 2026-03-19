@@ -40,7 +40,8 @@ return
     }
 return
 
-+d::  ; Shift+D
+$+d::  ; Shift+D
+    Critical
     ; immediately pause playback (this forces the timeline responsiveness to be quicker)
     Send, {Space} ; can improve performance in some cases by stopping playback during multi-actions
                                                                                                                     ; Step 1: Check the selection and capture the result
@@ -101,8 +102,84 @@ return
     }
     else                                                                                                            ; Case 3: Zero clips were selected, or an error occurred
     {
-        Send, {Space} ;start playback again
-	Send, {s}
+        ; Send, {Space} ;start playback again
+	; Send, {s}
+	Send, {Backspace}  ; (undoes "space" from earlier)
+        SendInput, {Shift down}{d}{Shift up}
         TrayTip, Action Canceled, No video clips were selected., 2000
     }
 return
+
+$+b:: ; Shift+B
+    ;Critical
+    whr_jump := ComObjCreate("WinHttp.WinHttpRequest.5.1")
+    whr_jump.Open("GET", "http://localhost:8081/goToLastClipStart", false) ;asynchronous goes faster, but false is safer.
+    ; check if selected here
+    whr_jump.Send()
+    jumpResponse := whr_jump.ResponseText
+    whr_jump := "" ; Release the COM object
+
+    if InStr(jumpResponse, "complete")
+    {
+        scriptPath := A_ScriptDir "\MouseMover_WindowsFunctions.py"
+        pythonResult := RunWaitOne("python.exe """ . scriptPath . """ ""1""")
+        pythonResult := Trim(pythonResult, " `t`n`r")
+        
+        whr_jump2 := ComObjCreate("WinHttp.WinHttpRequest.5.1")
+        whr_jump2.Open("GET", "http://localhost:8081/goToLastClipEnd", false) ;wait to go to the end of clip
+        whr_jump2.Send()
+        jumpResponse2 := whr_jump2.ResponseText
+        whr_jump2 := "" ; Release the COM object
+
+        if InStr(jumpResponse2, "complete")
+        {
+            Run, python.exe "%scriptPath%" "%pythonResult%", %A_ScriptDir%, Hide
+            SendInput, {Ctrl down}{Shift down}{x}{Shift up}{Ctrl up}
+        }
+    }
+    else
+    {
+        SendInput, {Shift down}{b}{Shift up}
+    }
+return
+
+$+y:: ; Shift+Y
+    scriptPath := A_ScriptDir "\SlipAudioFrames.py"
+    
+    ; Run Python and capture the printed number
+    pythonResult := RunWaitOne("python.exe """ . scriptPath . """")
+    pythonResult := Trim(pythonResult, " `t`n`r")
+    
+    ; If they typed a valid number
+    if (pythonResult != "cancelled" && pythonResult != "0" && pythonResult != "")
+    {
+        whr_slip := ComObjCreate("WinHttp.WinHttpRequest.5.1")
+        
+        ; Send the number to the auto-generated localhost endpoint
+        url := "http://localhost:8081/slipAudioClips?inputParam=" . pythonResult
+        
+        whr_slip.Open("GET", url, false) 
+        whr_slip.Send()
+        
+        slipResponse := whr_slip.ResponseText
+        whr_slip := "" ; Release COM object
+        
+        ; Optional: Check if Premiere returned 'complete'
+        if InStr(slipResponse, "complete")
+        {
+            TrayTip, Audio Slip, Successfully slipped %pythonResult% frames!, 2000
+        }
+        else
+        {
+            MsgBox, 16, Error, Premiere returned: %slipResponse%
+        }
+    }
+return
+
+RunWaitOne(command) {
+    shell := ComObjCreate("WScript.Shell")
+    ; Open cmd, run command, exit
+    exec := shell.Exec(A_ComSpec " /C " . command)
+    ; Read the output stream
+    return exec.StdOut.ReadAll()
+}
