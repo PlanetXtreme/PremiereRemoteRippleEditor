@@ -73,8 +73,7 @@ export const host = {
         }
         return 'no_sequence'
     },
-
-createMarkerOnLastClip: function () {
+    createMarkerOnLastClip: function () {
         var sequence = app.project.activeSequence;
         function gatherSelectedClips(tracks) {
             for (var i = 0; i < tracks.numTracks; i++) { for (var j = 0; j < tracks[i].clips.numItems; j++) { var clip = tracks[i].clips[j]; if (clip.isSelected()) { selectedClips.push(clip); } } }
@@ -99,7 +98,6 @@ createMarkerOnLastClip: function () {
         // If anything failed (no sequence, no clips), return an error.
         return "failed";
     },
-
     goToLastMarkerAndDelete_NonResponse: function() {
         var sequence = app.project.activeSequence;
         if (sequence) {
@@ -116,7 +114,7 @@ createMarkerOnLastClip: function () {
             }
         }
     },
-goToLastMarkerAndDelete: function() {
+    goToLastMarkerAndDelete: function() {
         var sequence = app.project.activeSequence;
         if (sequence) {
             var markers = sequence.markers;
@@ -143,7 +141,6 @@ goToLastMarkerAndDelete: function() {
         }
         return "failed"; // No sequence found
     },
-
     deleteLastMarker: function() {
         var sequence = app.project.activeSequence;
         if (sequence) {
@@ -426,12 +423,187 @@ goToLastMarkerAndDelete: function() {
             }
         }
     },
-//include more functions here maaaun
+    goToLastClipStart: function () {
+        var sequence = app.project.activeSequence;
+        function gatherSelectedClips(tracks) {
+            for (var i = 0; i < tracks.numTracks; i++) {
+                for (var j = 0; j < tracks[i].clips.numItems; j++) {
+                    var clip = tracks[i].clips[j];
+                    if (clip.isSelected()) {
+                        selectedClips.push(clip);
+                    }
+                }
+            }
+        }
+        if (sequence) {
+            var selectedClips = [];
+            gatherSelectedClips(sequence.videoTracks);
+            gatherSelectedClips(sequence.audioTracks);
+            if (selectedClips.length > 0) { // find rightmost
+                var rightmostClip = selectedClips[0];
+                for (var k = 1; k < selectedClips.length; k++) {
+                    if (selectedClips[k].start.seconds > rightmostClip.start.seconds) {
+                        rightmostClip = selectedClips[k];
+                    }
+                }
+                // Move the playhead to the END of last clip
+                sequence.setPlayerPosition(rightmostClip.start.ticks);
+                return "complete";
+            }
+            return "no_clips";
+        }
+        return "failed";
+    },
+    goToLastClipEnd: function () {
+        var sequence = app.project.activeSequence;
+        function gatherSelectedClips(tracks) {
+            for (var i = 0; i < tracks.numTracks; i++) {
+                for (var j = 0; j < tracks[i].clips.numItems; j++) {
+                    var clip = tracks[i].clips[j];
+                    if (clip.isSelected()) {
+                        selectedClips.push(clip);
+                    }
+                }
+            }
+        }
+        if (sequence) {
+            var selectedClips = [];
+            gatherSelectedClips(sequence.videoTracks);
+            if (selectedClips.length > 0) { // find rightmost
+                var rightmostClip = selectedClips[0];
 
+                for (var k = 1; k < selectedClips.length; k++) {
+                    if (selectedClips[k].start.seconds > rightmostClip.start.seconds) {
+                        rightmostClip = selectedClips[k];
+                    }
+                }
+                // Move the playhead to the END of last clip
+                sequence.setPlayerPosition(rightmostClip.end.ticks);
+                return "complete";
+            }
+            return "no_clips";
+        }
+        return "failed";
+    },
+    slipAudioClipsBackwards: function () {
+        var sequence = app.project.activeSequence;
+        
+        // Helper function to just grab selected clips from specific tracks
+        function gatherSelectedClips(tracks) {
+            var selected = [];
+            for (var i = 0; i < tracks.numTracks; i++) {
+                for (var j = 0; j < tracks[i].clips.numItems; j++) {
+                    var clip = tracks[i].clips[j];
+                    if (clip.isSelected()) {
+                        selected.push(clip);
+                    }
+                }
+            }
+            return selected;
+        }
 
+        if (sequence) {
+            // 1. Gather ONLY from audio tracks (as requested)
+            var selectedAudioClips = gatherSelectedClips(sequence.audioTracks);
 
+            if (selectedAudioClips.length > 0) {
+                
+                // 2. Calculate exactly how many "ticks" make up 11 frames.
+                // sequence.timebase gives us the exact length of 1 frame in ticks.
+                var framesToSlip = 11;
+                var slipTicks = framesToSlip * Number(sequence.timebase);
 
+                // 3. Loop through all selected audio clips and slip them
+                for (var k = 0; k < selectedAudioClips.length; k++) {
+                    var clip = selectedAudioClips[k];
 
+                    // Get current In and Out points relative to the source media
+                    var currentIn = Number(clip.inPoint.ticks);
+                    var currentOut = Number(clip.outPoint.ticks);
+
+                    // Subtracting ticks moves the content "backwards" 
+                    // (revealing earlier parts of the raw audio file)
+                    var newIn = currentIn + slipTicks;
+                    var newOut = currentOut + slipTicks;
+
+                    // SAFETY CHECK: Prevent slipping past the very beginning of the raw audio file
+                    if (newIn < 0) {
+                        var maxAllowedSlip = currentIn; // Slip as much as possible up to 0
+                        newIn = currentIn + maxAllowedSlip;
+                        newOut = currentOut + maxAllowedSlip;
+                    }
+
+                    // 4. Apply the new points to the clip
+                    // We extract the time object, modify it as a string, and push it back
+                    var inTime = clip.inPoint;
+                    inTime.ticks = String(newIn);
+                    clip.inPoint = inTime;
+
+                    var outTime = clip.outPoint;
+                    outTime.ticks = String(newOut);
+                    clip.outPoint = outTime;
+                }
+            } 
+        }
+    },
+    slipAudioClips: function (inputParam) {
+        function gatherSelectedClips(tracks) {
+            var selected = [];
+            for (var i = 0; i < tracks.numTracks; i++) {
+                for (var j = 0; j < tracks[i].clips.numItems; j++) {
+                    if (tracks[i].clips[j].isSelected()) {
+                        selected.push(tracks[i].clips[j]);
+                    }
+                }
+            }
+            return selected;
+        }
+        try {
+            // Frameworks either pass ?frames=11 as a string "11", or an object {"frames": "11"}
+            // This handles both seamlessly.
+            var framesStr = (typeof inputParam === 'object' && inputParam.frames) ? inputParam.frames : inputParam;
+            var framesToSlip = Number(framesStr);
+            
+            if (isNaN(framesToSlip)) return "error: invalid frames input";
+    
+            var sequence = app.project.activeSequence;
+            if (!sequence) return "error: no sequence";
+    
+            var selectedAudioClips = gatherSelectedClips(sequence.audioTracks);
+    
+            if (selectedAudioClips.length > 0) {
+                var timebaseTicks = Number(sequence.timebase); 
+                var slipTicks = framesToSlip * timebaseTicks;
+    
+                for (var k = 0; k < selectedAudioClips.length; k++) {
+                    var clip = selectedAudioClips[k];
+    
+                    var currentIn = Number(clip.inPoint.ticks);
+                    var currentOut = Number(clip.outPoint.ticks);
+    
+                    var newIn = currentIn - slipTicks;
+                    var newOut = currentOut - slipTicks;
+    
+                    if (newIn < 0) {
+                        var maxAllowedSlip = currentIn; 
+                        newIn = currentIn - maxAllowedSlip;
+                        newOut = currentOut - maxAllowedSlip;
+                    }
+    
+                    var inTime = clip.inPoint;
+                    inTime.ticks = String(newIn);
+                    clip.inPoint = inTime;
+    
+                    var outTime = clip.outPoint;
+                    outTime.ticks = String(newOut);
+                    clip.outPoint = outTime;
+                }
+            } 
+            return "complete"; // Tells AHK the script finished successfully!
+        } catch (err) {
+            return "error: " + err.toString();
+        }
+    },
 };
 
 // THE BELOW function(s) are only used internally. DEVELOPERS, DO NOT EDIT THESE.
