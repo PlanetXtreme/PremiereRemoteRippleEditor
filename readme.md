@@ -5,6 +5,8 @@ REQUIRED: Place files into starter folder, C:\Program Files\Adobe\Adobe Premiere
 
 REQUIRED: Install NodeJS here https://nodejs.org/en/download
 
+REQUIRED: Allow custom Premiere Pro plugins to run by editing windows registry here [Registry Editor]: HKEY_CURRENT_USER\Software\Adobe\CSXS.11 (or current version). Create string value "PlayerDebugMode = 1"
+
 After that, run CMD as administrator, cd to the host directory (C:\Program Files\Adobe\Adobe Premiere Pro 2025\CEP\extensions\Your_Extension\host), do "npm install".
 Inside "host" folder, run "REBUILD_NPM_BATCH.bat." Originally it was required to do "NPM run build" after cding into the correct directory, but now you can double click this function and execute this command instantly, and it automatically tries to elevate commands. YOU NEED TO DO THIS TO APPLY ANY EDITS/CODE CHANGES (as described in original documentation).
 
