@@ -2,6 +2,7 @@ READ THIS DOCUMENTATION FROM ORIGINAL FIRST.
 https://github.com/sebinside/PremiereRemote
 
 REQUIRED: Install NodeJS here https://nodejs.org/en/download
+After that, run CMD as administrator, cd to the host directory (C:\Program Files\Adobe\Adobe Premiere Pro 2025\CEP\extensions\Your_Extension\host), do "npm install," And you should be ready!
 
 Here are the additionls made to improve editing this project:
 Inside "host" folder, "REBUILD_NPM_BATCH.bat." Originally it was required to do "NPM run build" after cding into the correct directory, but now you can double click this function and execute this command instantly. YOU NEED TO DO THIS WHEN INSTALLING FOR THE FIRST TIME/DURING EDIT CHANGES (as described in original documentation).
