@@ -2,9 +2,12 @@ READ THIS DOCUMENTATION FROM ORIGINAL FIRST.
 https://github.com/sebinside/PremiereRemote
 
 REQUIRED: Place files into starter folder, C:\Program Files\Adobe\Adobe Premiere Pro 2025\CEP\extensions\Your_Extension
+
 REQUIRED: Install NodeJS here https://nodejs.org/en/download
+
 After that, run CMD as administrator, cd to the host directory (C:\Program Files\Adobe\Adobe Premiere Pro 2025\CEP\extensions\Your_Extension\host), do "npm install".
 Inside "host" folder, run "REBUILD_NPM_BATCH.bat." Originally it was required to do "NPM run build" after cding into the correct directory, but now you can double click this function and execute this command instantly, and it automatically tries to elevate commands. YOU NEED TO DO THIS TO APPLY ANY EDITS/CODE CHANGES (as described in original documentation).
+
 
 Bonus of this fork: Inside the Premiere window for PremiereRemote, there is a button labeled "Open AHK Script", which opens the file explorer directory of the extension itself, allowing you to quickly activate the AHK Script when opening Premiere.
 
