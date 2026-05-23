@@ -33,7 +33,7 @@ import pyperclip
 # IGNORE THESE DEFAULT VARIABLES     IGNORE THESE DEFAULT VARIABLES     IGNORE THESE DEFAULT VARIABLES    IGNORE THESE DEFAULT VARIABLES
 # IGNORE THESE DEFAULT VARIABLES     IGNORE THESE DEFAULT VARIABLES     IGNORE THESE DEFAULT VARIABLES    IGNORE THESE DEFAULT VARIABLES
 
-is_windowed = True #IF YOU USE WINDOWED MODE, SET AS True. If borderless or fullscreen, set to False. May not matter for certain games.
+is_windowed = False #IF YOU USE WINDOWED MODE, SET AS True. If borderless or fullscreen, set to False. May not matter for certain games.
 is_windowed_px = 40
 keyboard_controller = Controller()
 ahk = AHK()
@@ -1178,7 +1178,7 @@ if len(sys.argv) > 1:
 
     command = sys.argv[1]
     if command == "1": #iteration 1 
-        clickFuncRawOffsetWindowsScaling((280, 418), bypass_scaling=False, printStatements=False) #pos1 (anchor point)
+        clickFuncRawOffsetWindowsScaling((270, 528), bypass_scaling=False, printStatements=False) #pos1 (anchor point)
         time.sleep(uiSpeed) #waits for UI to respond (maybe too quick)
         keyboard_controller.press(Key.ctrl)
         keyboard_controller.press('c')
@@ -1187,7 +1187,7 @@ if len(sys.argv) > 1:
         time.sleep(uiSpeed) #waits for UI to respond (maybe too quick)
         clipboard1 = pyperclip.paste()
         #compute height of input image (input X2)
-        clickFuncRawOffsetWindowsScaling((376, 418), bypass_scaling=False, printStatements=False) #pos2 (anchor point 2)
+        clickFuncRawOffsetWindowsScaling((363, 528), bypass_scaling=False, printStatements=False) #pos2 (anchor point 2)
         time.sleep(uiSpeed) #waits for UI to respond (maybe too quick)
         keyboard_controller.press(Key.ctrl)
         keyboard_controller.press('c')
@@ -1199,12 +1199,12 @@ if len(sys.argv) > 1:
 
 
         scaleVal = compute_scale_to_fill(clipboard1, clipboard2) #compute width of input image  (input X2)
-        clickFuncRawOffsetWindowsScaling((290, 296), bypass_scaling=False, printStatements=False) #scale (100)
+        clickFuncRawOffsetWindowsScaling((267, 377), bypass_scaling=False, printStatements=False) #scale (100)
         time.sleep(uiSpeed) #waits for UI to respond (maybe too quick)
         write_text(str(scaleVal))
         #pyautogui.keyDown('enter')
         #pyautogui.keyUp('enter')
-        clickFuncRawOffsetWindowsScaling((94, 296), bypass_scaling=False, printStatements=False) #scale stopwatch
+        clickFuncRawOffsetWindowsScaling((103, 383), bypass_scaling=False, printStatements=False) #scale stopwatch
 
         #go to beginning of clip (AHK) /////////
 
@@ -1226,7 +1226,7 @@ if len(sys.argv) > 1:
 
     else: #iteration 2 for this specific function
 
-        clickFuncRawOffsetWindowsScaling((290, 296), bypass_scaling=False, printStatements=False) #scale (float)
+        clickFuncRawOffsetWindowsScaling((268, 379), bypass_scaling=False, printStatements=False) #scale (float)
         time.sleep(uiSpeed) #waits for UI to respond
         write_text(str(command))
         time.sleep(uiSpeed) #waits for UI to respond
