@@ -25,9 +25,9 @@ AS A DEVELOPER, ONLY EDIT THE "host" folder. That is the only folder you should 
 Happy scripting!
 
 
-``
+```
 FASTREAD (keybind change if/when resetting preferences):
   Z             = UNBOUND in Premiere (normally zoom)
   Alt+Shift+D   = Set to Ripple Delete
   S             = Set to Shuttle Right (overwrites 'snap in timeline')
-``
+```
