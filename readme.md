@@ -27,7 +27,7 @@ Happy scripting!
 
 ```
 FASTREAD (keybind change if/when resetting preferences):
-  Z             = UNBOUND in Premiere (normally zoom)
-  Alt+Shift+D   = Set to Ripple Delete
-  S             = Set to Shuttle Right (overwrites 'snap in timeline')
+  Z:              UNBOUND in Premiere (normally 'zoom')
+  Alt+Shift+D   = Ripple Delete
+  S             = Shuttle Right (overwrites 'snap in timeline')
 ```
