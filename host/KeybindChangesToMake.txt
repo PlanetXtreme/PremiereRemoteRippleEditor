@@ -1,0 +1,3 @@
+Z:              UNBOUND in Premiere (normally zoom)
+Alt+Shift+D   = Ripple Delete
+S             = Shuttle Right (overwrites 'snap in timeline')
